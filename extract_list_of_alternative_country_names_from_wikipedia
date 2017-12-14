@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 14 16:14:10 2017
+
+@author: Deepak.Joseph
+"""
+
+import csv
+from bs4 import BeautifulSoup
+import urllib.request
+
+#with urllib.request.urlopen('https://en.wikipedia.org/wiki/List_of_alternative_country_names') as response:
+#      html = response.read()
+soup = BeautifulSoup(html, 'html.parser')
+#print(soup.prettify)
+
+a = soup.find_all("table", class_="wikitable")
+#str(type(i.).split(" ")[1].replace(">","").replace("'","") == 'bs4.element.NavigableString')
+country_list=[]
+for i in   a:
+    
+    
+    #print(type(i))
+    if( str(type(i)).split(" ")[1].split("'>")[0].replace("'","") == 'bs4.element.NavigableString'):
+        
+        continue
+    else:
+        #print(i)
+        #print(i.find_all("tr"))
+        for rows in i:
+            country = {}
+            #print (type(rows))
+            al_names_list=[]
+            alternative_names=""
+            try:
+                alternative_names = rows.find_all("td")[1]
+                #print(alternative_names)
+            except:
+                continue
+            #print((rows.find_all("td")[0].find_all("a"))[0].contents[0])
+            country['Name']=((rows.find_all("td")[0].find_all("a"))[0].contents[0])
+            
+    
+            #print (al_names_list[0].contents)
+    
+            for j in alternative_names.find_all("b"):
+                if(str(type(j.contents[0])).split(" ")[1].replace(">","").replace("'","") == 'bs4.element.Tag'):
+                    #print (j.find_all("a")[0].contents[0])
+                    try:
+                        al_names_list.append(j.find_all("a")[0].contents[0])
+                        continue
+                    except:
+                        continue
+                al_names_list.append(j.contents[0])
+                #print(type(j.contents[0]),j.contents[0])
+                #break
+                #al_names_list.append((j.contents[0]))
+                #print(al_names_list)
+                country['alternate_names'] = al_names_list
+            country_list.append(country)
+            #except:
+                #continue
+                #print(country)
+        #print("--------------")
+print(country_list)
+
